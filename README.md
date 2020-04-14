@@ -1,1 +1,2 @@
 # eight-puzzle-race
+This is the final project for my CSC 207 class taught by Professor Fahmida Hamid. I am working with Alex Lavery and Will Richman to create an eight puzzle solver. The programming will be in java. We plan to create a solver and then an interface in which the user will be able to try to solve the puzzle. If you are able to beat the solver in number of moves to solution, then you win!
