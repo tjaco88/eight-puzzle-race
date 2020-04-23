@@ -1,4 +1,5 @@
-package eightPuzzle;
+package eightpuzzle;
 
 public class Puzzle {
+
 }
