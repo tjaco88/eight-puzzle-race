@@ -21,7 +21,26 @@ public class Board {
         this.x = 0;
         this.y = 0;
     }
+
+    public Board(Board b){
+        this.puzzle = b.puzzle;
+        this.x = b.x;
+        this.y = b.y;
+    }
     
+    public boolean isEquals(int[][] puzzle){
+        boolean equal = true;
+        outer : for(int i = 0; i < 3; i++){
+            for(int j = 0; j < 3; j++){
+                if(this.puzzle[i][j] != puzzle[i][j]){
+                    equal = false;
+                    break outer;
+                }
+            }
+        }
+        return equal;
+    }
+
     /**
     * isGoal checks if the puzzle is in its goal state
     *  Goal state starts with 1 in the top left corner
@@ -32,20 +51,18 @@ public class Board {
     *  Where 0 is the blank space
     */
     public boolean isGoal() {
-        int current = 1;
-        boolean soFar = true;
-        outer: for (int j = 0; j < 3; j++) {
-            for (int i = 0; i < 3; i++) {
-                if (current == 9) {
-                    break outer;
-                }
-                if (this.puzzle[i][j] != current) {
-                    soFar = false;
-                }
-                current++;
-            }
-        }
-        return soFar;
+        int[][] goal = new int[3][3];
+        goal[0][0] = 1;
+        goal[1][0] = 2;
+        goal[2][0] = 3;
+        goal[0][1] = 4;
+        goal[1][1] = 5;
+        goal[2][1] = 6;
+        goal[0][2] = 7;
+        goal[1][2] = 8;
+        goal[2][2] = 0; 
+        
+        return this.isEquals(goal);
     }
     
     /**
@@ -56,19 +73,33 @@ public class Board {
     */
     public boolean isSolvable(int[][] puzzle) {
         int count = 0;
-        for (int i = 0; i < 3 - 1; i++)
-            for (int j = i + 1; j < 3; j++)
-                if (puzzle[j][i] > 0 && puzzle[j][i] > puzzle[i][j])
+        int index = 0;
+        int[] inversion = new int[8];
+        for(int i = 0; i < 3; i++){
+            for(int j = 0; j < 3; j++){
+                if(!(puzzle[i][j] == 0)){
+                    inversion[index] = puzzle[i][j];
+                    index++;
+                }
+            }
+        }
+        
+        for (int i = 0; i < inversion.length; i++){
+            for (int j = i + 1; j < inversion.length; j++){
+                if (inversion[j] > inversion[i]){
                     count++;
-
-        return (count % 2 == 0);
+                }
+            }
+        }
+        
+        return !(count % 2 == 1);
     }
-
+    
     /**
-     * randomBoard produces a random eight puzzle board
-     *  guranteed to be solvable because of loop
-     *  sets index of blank space
-     */
+    * randomBoard produces a random eight puzzle board
+    *  guranteed to be solvable because of loop
+    *  sets index of blank space
+    */
     public void randomBoard() {
         boolean solvable = false;
         int[][] problem = new int[3][3];
@@ -90,11 +121,11 @@ public class Board {
                 }
             }
             if (isSolvable(problem))
-                solvable = true;
+            solvable = true;
         }
         this.puzzle = problem;
     }
-
+    
     public void printBoard(){
         for(int i = 0; i < 3; i++){
             System.out.print("{");
@@ -104,54 +135,70 @@ public class Board {
             System.out.print(" }\n");
         }
     }
-
-    public void getMoves(){
+    
+    public List<String> getMoves(){
+        List<String> moves = new ArrayList<>();
         if(this.y == 0){
-            System.out.print("DOWN, ");
+            moves.add("DOWN");
         }
         if(this.y == 1){
-            System.out.print("UP, " + "DOWN, ");
+            moves.add("UP");
+            moves.add("DOWN");
         }
         if(this.y == 2){
-            System.out.print("UP, ");
+            moves.add("UP");
         }
         if(this.x == 0){
-            System.out.print("RIGHT");
+            moves.add("RIGHT");
         }
         if(this.x == 1){
-            System.out.print("LEFT, " + "RIGHT");
+            moves.add("LEFT");
+            moves.add("RIGHT");
         }
         if(this.x == 2){
-            System.out.print("LEFT");
+            moves.add("LEFT");
         }
-        System.out.print(")\n");
+        return moves;
     }
-
-    public void move(String move){
+    
+    public static Board move(Board board, String move){
         int temp = 0;
+        Board b = new Board();
+        for(int i = 0; i < 3; i++){
+            for(int j = 0; j < 3; j++){
+                int value = board.puzzle[i][j];
+                b.puzzle[i][j] = value;
+                if(value == 0){
+                    b.x = i;
+                    b.y = j;
+                }
+            }
+        }
+
         if(move.equals("LEFT")){
-            temp = this.puzzle[this.x - 1][this.y];
-            this.puzzle[this.x - 1][this.y] = this.puzzle[this.x][this.y] ;
-            this.puzzle[this.x][this.y] = temp;
-            this.x -= 1;
+            temp = b.puzzle[b.x - 1][b.y];
+            b.puzzle[b.x - 1][b.y] = b.puzzle[b.x][b.y] ;
+            b.puzzle[b.x][b.y] = temp;
+            b.x--;
         }
         if(move.equals("RIGHT")){
-            temp = this.puzzle[this.x + 1][this.y];
-            this.puzzle[this.x + 1][this.y] = this.puzzle[this.x][this.y] ;
-            this.puzzle[this.x][this.y] = temp;
-            this.x += 1;
+            temp = b.puzzle[b.x + 1][b.y];
+            b.puzzle[b.x + 1][b.y] = b.puzzle[b.x][b.y] ;
+            b.puzzle[b.x][b.y] = temp;
+            b.x++;
         }
         if(move.equals("UP")){
-            temp = this.puzzle[this.x][this.y - 1];
-            this.puzzle[this.x][this.y - 1] = this.puzzle[this.x][this.y] ;
-            this.puzzle[this.x][this.y] = temp;
-            this.y -= 1;
+            temp = b.puzzle[b.x][b.y - 1];
+            b.puzzle[b.x][b.y - 1] = b.puzzle[b.x][b.y] ;
+            b.puzzle[b.x][b.y] = temp;
+            b.y--;
         }
         if(move.equals("DOWN")){
-            temp = this.puzzle[this.x][this.y + 1];
-            this.puzzle[this.x][this.y + 1] = this.puzzle[this.x][this.y] ;
-            this.puzzle[this.x][this.y] = temp;
-            this.y +=1;
+            temp = b.puzzle[b.x][b.y + 1];
+            b.puzzle[b.x][b.y + 1] = b.puzzle[b.x][b.y] ;
+            b.puzzle[b.x][b.y] = temp;
+            b.y++;
         }
+        return b;
     }
 }
