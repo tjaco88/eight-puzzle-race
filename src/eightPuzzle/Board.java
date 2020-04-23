@@ -14,8 +14,8 @@ public class Board {
     // Position of blank space 
     public int x, y;
     
-    public Board(int[][] puzzle) {
-        this.puzzle = puzzle;
+    public Board() {
+        this.puzzle = new int[3][3];
         this.toSolve = 0;
         this.moves = 0;
         this.x = 0;
@@ -54,7 +54,7 @@ public class Board {
     *  if inversion is odd, it is not solvable
     * @return a boolean value
     */
-    public static boolean isSolvable(int[][] puzzle) {
+    public boolean isSolvable(int[][] puzzle) {
         int count = 0;
         for (int i = 0; i < 3 - 1; i++)
             for (int j = i + 1; j < 3; j++)
@@ -64,7 +64,7 @@ public class Board {
         return (count % 2 == 0);
     }
 
-    public static int[][] randomBoard() {
+    public void randomBoard() {
         boolean solvable = false;
         int[][] problem = new int[3][3];
         while (!solvable) {
@@ -77,13 +77,17 @@ public class Board {
                 for (int j = 0; j < 3; j++) {
                     int rando = rand.nextInt(starter.size());
                     problem[i][j] = starter.get(rando);
+                    if(starter.get(rando) == 0){
+                        this.x = j;
+                        this.y = i;
+                    }
                     starter.remove(rando);
                 }
             }
             if (isSolvable(problem))
                 solvable = true;
         }
-        return problem;
+        this.puzzle = problem;
     }
 
     public void printBoard(){
