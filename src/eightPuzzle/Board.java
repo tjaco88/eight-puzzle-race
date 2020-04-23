@@ -64,6 +64,11 @@ public class Board {
         return (count % 2 == 0);
     }
 
+    /**
+     * randomBoard produces a random eight puzzle board
+     *  guranteed to be solvable because of loop
+     *  sets index of blank space
+     */
     public void randomBoard() {
         boolean solvable = false;
         int[][] problem = new int[3][3];
@@ -78,8 +83,8 @@ public class Board {
                     int rando = rand.nextInt(starter.size());
                     problem[i][j] = starter.get(rando);
                     if(starter.get(rando) == 0){
-                        this.x = j;
-                        this.y = i;
+                        this.x = i;
+                        this.y = j;
                     }
                     starter.remove(rando);
                 }
@@ -97,6 +102,56 @@ public class Board {
                 System.out.print(" " + this.puzzle[j][i]);
             }
             System.out.print(" }\n");
+        }
+    }
+
+    public void getMoves(){
+        if(this.y == 0){
+            System.out.print("DOWN, ");
+        }
+        if(this.y == 1){
+            System.out.print("UP, " + "DOWN, ");
+        }
+        if(this.y == 2){
+            System.out.print("UP, ");
+        }
+        if(this.x == 0){
+            System.out.print("RIGHT");
+        }
+        if(this.x == 1){
+            System.out.print("LEFT, " + "RIGHT");
+        }
+        if(this.x == 2){
+            System.out.print("LEFT");
+        }
+        System.out.print(")\n");
+    }
+
+    public void move(String move){
+        int temp = 0;
+        if(move.equals("LEFT")){
+            temp = this.puzzle[this.x - 1][this.y];
+            this.puzzle[this.x - 1][this.y] = this.puzzle[this.x][this.y] ;
+            this.puzzle[this.x][this.y] = temp;
+            this.x -= 1;
+        }
+        if(move.equals("RIGHT")){
+            temp = this.puzzle[this.x + 1][this.y];
+            this.puzzle[this.x + 1][this.y] = this.puzzle[this.x][this.y] ;
+            this.puzzle[this.x][this.y] = temp;
+            this.x += 1;
+        }
+        if(move.equals("UP")){
+            temp = this.puzzle[this.x][this.y - 1];
+            this.puzzle[this.x][this.y - 1] = this.puzzle[this.x][this.y] ;
+            this.puzzle[this.x][this.y] = temp;
+            this.y -= 1;
+        }
+        if(move.equals("DOWN")){
+            temp = this.puzzle[this.x][this.y + 1];
+            this.puzzle[this.x][this.y + 1] = this.puzzle[this.x][this.y] ;
+            this.puzzle[this.x][this.y] = temp;
+            this.y +=1;
         }
     }
 }
