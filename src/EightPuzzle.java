@@ -1,5 +1,7 @@
 import eightpuzzle.Board;
+import eightpuzzle.Solved;
 import eightpuzzle.Solver;
+import eightpuzzle.Solved;
 
 import java.util.List;
 import java.util.Scanner;
@@ -25,9 +27,22 @@ public class EightPuzzle {
             // They want to play game
             if(answer.equals("YES")){
                 int numMove = 0;
+                System.out.println("How many moves would you like to take to solve the puzzle? ");
+                String movesToSolve = in.nextLine();
                 System.out.println("Awesome! Generating game board...");
                 System.out.println("The '0' is the black space. Try to get the '0' to the bottom right corner. The numbers should move in order from left to right.");
                 Board eightPuzzle = new Board();
+
+                Solved solve = new Solved(Integer.parseInt(movesToSolve));
+                boolean showSolution = false;
+                int pointInSolution = 0;
+                movesAI = Integer.parseInt(movesToSolve);
+
+                eightPuzzle.puzzle = solve.board.puzzle.clone();
+                eightPuzzle.x = solve.board.x;
+                eightPuzzle.y = solve.board.y;
+
+                /*
                 eightPuzzle.randomBoard();
                 
 
@@ -41,10 +56,10 @@ public class EightPuzzle {
                 testPuzzle[0][2] = 7;
                 testPuzzle[1][2] = 5;
                 testPuzzle[2][2] = 8; 
-                /*eightPuzzle.puzzle = testPuzzle;
+                eightPuzzle.puzzle = testPuzzle;
                 eightPuzzle.x = 1;
                 eightPuzzle.y = 1;
-                */
+                
                 int[][] temp = new int[3][3];
                 temp = eightPuzzle.puzzle;
                 int tempX = eightPuzzle.x;
@@ -60,9 +75,25 @@ public class EightPuzzle {
                 Solver solveMe = new Solver(eightPuzzleAI);
                 solveMe.solve();
                 System.out.println("It took me " + solveMe.numMoves + " move(s) to beat.");
+                */
+
                 
                 // Loop until they solve puzzle or enter quit
                 while(!eightPuzzle.isGoal()){
+                    boolean checkSolution = false;
+                    
+                    if(showSolution){
+                        if(checkSolution){
+                            System.out.println("Generating move for you...");
+                            eightPuzzle.puzzle = solve.board.puzzle.clone();
+                            eightPuzzle.x = solve.board.x;
+                            eightPuzzle.y = solve.board.y;
+                            checkSolution = false;
+                        }
+                        System.out.println(pointInSolution + "You should move " + solve.viewSolution(pointInSolution));
+                        pointInSolution++;
+
+                    }
                     eightPuzzle.printBoard();
                     System.out.println("Total moves: " + numMove);
                     System.out.print("Available Moves: ");
@@ -71,19 +102,28 @@ public class EightPuzzle {
                         System.out.print(" " + move);
                     }
                     System.out.print("\n");
-                    System.out.println("What move do you want to do? (Enter QUIT to exit)");
+                    System.out.print("What move do you want to do?\n (Enter QUIT to exit)\n (Enter SOLUTON to show the solution)\n");
+                    
+
                     String input = in.nextLine().toUpperCase();
                     if(input.equals("QUIT"))
                     break;
-                    eightPuzzle = Board.move(eightPuzzle, input);
-                    
+                    if(input.equals("SOLUTION")){
+                        showSolution = true;
+                        checkSolution = true;
+                    }
+                    else if(eightPuzzle.validMove(input)){
+                        eightPuzzle = Board.move(eightPuzzle, input);
+                        numMove++;
+                    }
+                    else
+                    System.out.println("Not a valid input. Please try again"); 
+
                     if(eightPuzzle.isGoal()){
                         moves = numMove;
-                        movesAI = 0;//solveMe.numMoves;
                         goal = true;
                     }
-                    numMove++;
-                    
+                                   
                 }
             }
             

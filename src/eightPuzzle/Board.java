@@ -9,7 +9,7 @@ public class Board {
     public int[][] puzzle;
     
     // Moves to solve, and nnumber of moves taken already
-    public int toSolve, moves;
+    public int toSolve;
     
     // Position of blank space 
     public int x, y;
@@ -17,7 +17,6 @@ public class Board {
     public Board() {
         this.puzzle = new int[3][3];
         this.toSolve = 0;
-        this.moves = 0;
         this.x = 0;
         this.y = 0;
     }
@@ -26,6 +25,22 @@ public class Board {
         this.puzzle = b.puzzle;
         this.x = b.x;
         this.y = b.y;
+    }
+
+    public Board(int moves){
+        this.puzzle = new int[3][3];
+        this.toSolve = moves;
+        this.x = 2;
+        this.y = 2;
+        this.puzzle[0][0] = 1;
+        this.puzzle[1][0] = 2;
+        this.puzzle[2][0] = 3;
+        this.puzzle[0][1] = 4;
+        this.puzzle[1][1] = 5;
+        this.puzzle[2][1] = 6;
+        this.puzzle[0][2] = 7;
+        this.puzzle[1][2] = 8;
+        this.puzzle[2][2] = 0; 
     }
     
     public boolean isEquals(int[][] puzzle){
@@ -135,6 +150,7 @@ public class Board {
             System.out.print(" }\n");
         }
     }
+
     
     public List<String> getMoves(){
         List<String> moves = new ArrayList<>();
@@ -200,5 +216,15 @@ public class Board {
             b.y++;
         }
         return b;
+    }
+
+    public boolean validMove(String input){
+        boolean valid = false;
+        List<String> moves = this.getMoves();
+        for(String move : moves){
+            if(move.equals(input))
+            valid = true;
+        }
+        return valid;
     }
 }
