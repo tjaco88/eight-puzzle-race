@@ -1,2 +1,6 @@
 # eight-puzzle-race
 This is the final project for my CSC 207 class taught by Professor Fahmida Hamid. I am working with Alex Lavery and Will Richman to create an eight puzzle solver. The programming will be in java. We plan to create a solver and then an interface in which the user will be able to try to solve the puzzle. If you are able to beat the solver in number of moves to solution, then you win!
+
+The solver uses A* search with a heuristic based on the manhattan distance and the amount of misplaced tiles. The manhattan distance is the distance that each piece away from its goal position. The solver is simple but takes up lots of space. Through testing, the solver runs out of space at 50 moves. The moves that create a random board are random and can repest themselves (i.e "Up" then "Down"). This can result in a fairly simple 8 puzzle to solve in a lot less moves than the moves it took to generate the board. 
+
+The user also has the option to try and solve the puzzle without the solver to attempt it. This is the recommended use for any puzzle that takes more than 40 moves to solve. However, the user still has access to the solution even if the the user does not want the solver to attempt to solve the puzzle.  
