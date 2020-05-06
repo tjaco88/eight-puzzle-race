@@ -1,5 +1,13 @@
-package eightpuzzle;
+/**
+ * Node.java
+ *  contains the Node class that is used by the Solver
+ *  used in the priority queue of the solver
+ * @author Tommy Jacobs
+ * @author Alex Lavery
+ * @author Will Richman
+ */
 
+package eightpuzzle;
 
 public class Node {
     Node parent;

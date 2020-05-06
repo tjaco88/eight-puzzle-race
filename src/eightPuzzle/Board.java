@@ -1,3 +1,11 @@
+/**
+ * Board.java
+ *  contains the Board class that contains the physcal puzzle
+ * @author Tommy Jacobs
+ * @author Alex Lavery
+ * @author Will Richman
+ */
+
 package eightpuzzle;
 
 import java.util.ArrayList;

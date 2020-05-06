@@ -1,3 +1,12 @@
+
+/**
+ * Solved.java
+ *  contains the way to make a random board and solve it 
+ * @author Tommy Jacobs
+ * @author Alex Lavery
+ * @author Will Richman
+ */
+
 package eightpuzzle;
 
 import java.util.List;

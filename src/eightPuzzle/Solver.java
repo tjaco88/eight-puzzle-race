@@ -1,6 +1,15 @@
+/**
+ * Solver.java
+ *  contains the Solver for the eight pussle
+ *  uses A* search to find a solution
+ *  can run out of space for more difficult puzzles
+ * @author Tommy Jacobs
+ * @author Alex Lavery
+ * @author Will Richman
+ */
+
 package eightpuzzle;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.PriorityQueue;
 

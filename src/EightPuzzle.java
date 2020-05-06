@@ -1,3 +1,11 @@
+/**
+ * EightPuzzle.java
+ *  contains simple interface to run the eightpuzzle
+ * @author Tommy Jacobs
+ * @author Alex Lavery
+ * @author Will Richman
+ */
+
 import eightpuzzle.Board;
 import eightpuzzle.Solved;
 import eightpuzzle.Solver;
