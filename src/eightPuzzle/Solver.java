@@ -1,99 +1,74 @@
 package eightpuzzle;
 
-import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.PriorityQueue;
 
 public class Solver {
     Board initial;
-    public String[] solution;
-    public StringBuffer moves;
+
+    //keep tracks of the numMoves taken to solve
     public int numMoves;
+
+    // Bottom, left, top, right
+	int[] row = { 1, 0, -1, 0 };
+	int[] col = { 0, -1, 0, 1 };
+
     
     public Solver(Board board){
-        moves = new StringBuffer();
-        moves.append("{ 1 2 3 }\n" + "{ 4 5 6 }\n" + "{ 7 8 0 }\n");
         this.initial = board;
-        this.numMoves = 0;
+        numMoves = 0;
     }
     
-    public void path(Node current){
-        Node temp = current;
-        int i = 0;
-        int j;
-        String[] temps = new String[50];
-        
-        
-        while(temp.parent != null){
-            temps[i++] = temp.moveFromParent;
-            temp = temp.parent;
-            this.numMoves++;
-        }
-        
-        int size = i;
-        this.solution = new String[size];
-        for(i = 0, j = size-1; i < size; i++, j--)
-        {
-            this.solution[i] = temps[j];
-            this.moves.append( "Move " + this.solution[i] + "\n");
-        }
-    }
+    /**
+     * print the path that is the soloution
+     *  also finds the moves taken to solve
+     * @param root
+     */
+    public void printPath(Node root) {
+		if (root == null) {
+			return;
+		}
+        printPath(root.parent);
+        this.numMoves++;
+		root.state.printBoard();
+		System.out.println();
+	}
     
-    public boolean alreadyIn(List<Node> list, Node child){
-        for(Node n : list){
-            if(n.board.isEquals(child.board.puzzle)){
-                return true;
-            }
-        }
-        return false;
-    }
-    
-    public boolean alreadyIn(PriorityQueue<Node> queue, Node child){
-        Iterator<Node> value = queue.iterator();
-        while(value.hasNext())
-        if(value.next().board.isEquals(child.board.puzzle)){
-            return true;
-        }
-        return false;
-    }
-    
-    public void solve(){
-        Comparator<Node> solveComparator= new Comparator<Node>() {
-            @Override
-            public int compare(Node node1, Node node2) {
-                return node1.hCost - node2.hCost;
-            }
-        };
-        PriorityQueue<Node> solveQueue = new PriorityQueue<>(solveComparator);
-        List<Node> visited = new ArrayList<>();
+    /**
+     * Solves the puzzle using A* search
+     *  heuristic is the manhattan cost + the cost of misplaced tiles
+     * @param initial, a board that the user tries to solve
+     * @param goal, the goal state
+     */
+    public void solve(Board initial, int[][] goal) {
+        // priority queue to sort the nodes 
+        // help from geeksforgeeks.com to earn more about how I can change the priority queue
+        // sorted by cost
+		PriorityQueue<Node> pq = new PriorityQueue<Node>(1000, (a, b) -> (a.cost + a.level) - (b.cost + b.level));
+		Node root = new Node(initial);
+		root.cost = root.manhattanCost() + root.misplacedTile(goal);
+		pq.add(root);
         
-        Node intialState = new Node(this.initial);
-        Node current = new Node();
-        boolean solved = false;
-        solveQueue.add(intialState);
-        while(!solveQueue.isEmpty()){
-            current = solveQueue.poll();
-            current.addChildren();
-            System.out.println(visited.size() + solveQueue.size());
-            for(Node child : current.childNodes){
-                
-                if(child.board.isGoal()){
-                    this.path(child);
-                    System.out.println("solved");
-                    solved = true;
-                    break;
-                }
-                if(!(alreadyIn(solveQueue, child) || alreadyIn(visited, child))){
-                    solveQueue.add(child);
-                }
+        // Loop that goes until the queue is empty
+		while (!pq.isEmpty()) {
+            Node min = pq.poll();
+
+            // Checks to see if node is goal state
+			if (min.cost == 0) {
+                System.out.println("Solved!");
+				printPath(min);
+				return;
             }
-            visited.add(current);
-            if(solved == true){
-                break;
-            }
-        }
-    }
+            
+            // If not goal state, add child nodes to queue
+			List<String> moves = min.state.getMoves();
+			for (String move : moves) {
+	            	Node child = new Node(min.state, min, move);
+	            	child.cost = child.manhattanCost() + child.misplacedTile(goal);
+	            	pq.add(child);
+	        }
+		}
+	}
 }
 

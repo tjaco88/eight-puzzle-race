@@ -2,7 +2,6 @@ package eightpuzzle;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 public class Board {
     // Two dimensional array for the puzzle
@@ -28,19 +27,17 @@ public class Board {
     }
 
     public Board(int moves){
-        this.puzzle = new int[3][3];
+        int[][] start = { {1, 2, 3}, {4, 5, 6}, {7, 8, 0} };
         this.toSolve = moves;
         this.x = 2;
         this.y = 2;
-        this.puzzle[0][0] = 1;
-        this.puzzle[1][0] = 2;
-        this.puzzle[2][0] = 3;
-        this.puzzle[0][1] = 4;
-        this.puzzle[1][1] = 5;
-        this.puzzle[2][1] = 6;
-        this.puzzle[0][2] = 7;
-        this.puzzle[1][2] = 8;
-        this.puzzle[2][2] = 0; 
+        this.puzzle = start;
+    }
+
+    public Board(int[][] puzzle ,int x, int y){
+        this.puzzle = puzzle;
+        this.x = x;
+        this.y = y;
     }
     
     public boolean isEquals(int[][] puzzle){
@@ -60,22 +57,13 @@ public class Board {
     * isGoal checks if the puzzle is in its goal state
     *  Goal state starts with 1 in the top left corner
     *  Goal state:
-    *      {1, 2. 3}
-    *      {4, 5, 6}
-    *      {7, 8, 0}
+    *      {1, 4. 7}
+    *      {2, 5, 8}
+    *      {3, 6, 0}
     *  Where 0 is the blank space
     */
     public boolean isGoal() {
-        int[][] goal = new int[3][3];
-        goal[0][0] = 1;
-        goal[1][0] = 2;
-        goal[2][0] = 3;
-        goal[0][1] = 4;
-        goal[1][1] = 5;
-        goal[2][1] = 6;
-        goal[0][2] = 7;
-        goal[1][2] = 8;
-        goal[2][2] = 0; 
+        int[][] goal = { {1, 2, 3}, {4, 5, 6}, {7, 8, 0} };
         
         return this.isEquals(goal);
     }
@@ -86,60 +74,29 @@ public class Board {
     *  if inversion is odd, it is not solvable
     * @return a boolean value
     */
-    public boolean isSolvable(int[][] puzzle) {
-        int count = 0;
-        int index = 0;
-        int[] inversion = new int[8];
-        for(int i = 0; i < 3; i++){
-            for(int j = 0; j < 3; j++){
-                if(!(puzzle[i][j] == 0)){
-                    inversion[index] = puzzle[i][j];
-                    index++;
-                }
-            }
-        }
-        
-        for (int i = 0; i < inversion.length; i++){
-            for (int j = i + 1; j < inversion.length; j++){
-                if (inversion[j] > inversion[i]){
-                    count++;
-                }
-            }
-        }
-        
-        return !(count % 2 == 1);
-    }
-    
-    /**
-    * randomBoard produces a random eight puzzle board
-    *  guranteed to be solvable because of loop
-    *  sets index of blank space
-    */
-    public void randomBoard() {
-        boolean solvable = false;
-        int[][] problem = new int[3][3];
-        while (!solvable) {
-            List<Integer> starter = new ArrayList<>();
-            for (int i = 0; i < 9; i++) {
-                starter.add(i);
-            }
-            Random rand = new Random();
-            for (int i = 0; i < 3; i++) {
-                for (int j = 0; j < 3; j++) {
-                    int rando = rand.nextInt(starter.size());
-                    problem[i][j] = starter.get(rando);
-                    if(starter.get(rando) == 0){
-                        this.x = i;
-                        this.y = j;
-                    }
-                    starter.remove(rando);
-                }
-            }
-            if (isSolvable(problem))
-            solvable = true;
-        }
-        this.puzzle = problem;
-    }
+	public static boolean isSolvable(int[][] puzzle) {
+		int count = 0;
+		List<Integer> array = new ArrayList<Integer>();
+		
+		for (int i = 0; i < puzzle.length; i++) {
+			for (int j = 0; j < puzzle.length; j++) {
+				array.add(puzzle[i][j]);
+			}
+		}
+		
+		Integer[] anotherArray = new Integer[array.size()];
+		array.toArray(anotherArray);
+		
+		for (int i = 0; i < anotherArray.length - 1; i++) {
+			for (int j = i + 1; j < anotherArray.length; j++) {
+				if (anotherArray[i] != 0 && anotherArray[j] != 0 && anotherArray[i] > anotherArray[j]) {
+					count++;
+				}
+			}
+		}
+		
+		return count % 2 == 0;
+	}
     
     public void printBoard(){
         for(int i = 0; i < 3; i++){
@@ -151,7 +108,10 @@ public class Board {
         }
     }
 
-    
+    /**
+     * gets all of the moves available for the current state of the puzzle
+     * @return a list of all possible moves given the state
+     */
     public List<String> getMoves(){
         List<String> moves = new ArrayList<>();
         if(this.y == 0){
@@ -177,6 +137,12 @@ public class Board {
         return moves;
     }
     
+    /**
+     * Moves the blank space in the appropriate direction
+     * @param board, the current state of the puzzle
+     * @param move, the desired move
+     * @return, a board with the updated move and x,y coordinates of the blank space
+     */
     public static Board move(Board board, String move){
         int temp = 0;
         Board b = new Board();
@@ -218,6 +184,11 @@ public class Board {
         return b;
     }
 
+    /**
+     * Checks to see if the user input a valid move
+     * @param input, user inputted move
+     * @return a boolean value, true if move is valid
+     */
     public boolean validMove(String input){
         boolean valid = false;
         List<String> moves = this.getMoves();
